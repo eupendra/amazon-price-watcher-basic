@@ -3,23 +3,22 @@ import requests
 import config 
 import csv
 from datetime import datetime as d
-def get_price(address):
+def get_price(address) -> float:
     source = requests.get(address, headers=config.headers).text
     soup = BeautifulSoup(source, 'lxml')
     price = soup.find(
         "span", 
         {"id": "priceblock_ourprice"}
-        ).text
+        ).text.strip('$')
 
     # print(f'The price of Bose QC35 is {price}')
     return price
 
 # print(get_price(config.address))
 def log_in_csv(data:list):
-    file = open("price_history.csv","a") # will append
-    writer= csv.writer(file)  
-    writer.writerow(data)
-    file.close 
+    with open("price_history.csv","a",newline='') as file: # will append
+        writer= csv.writer(file)  
+        writer.writerow(data)
 
 
 price = get_price(config.address)
